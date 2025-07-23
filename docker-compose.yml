@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_django
+    restart: always
+    environment:
+      POSTGRES_DATABASE: ${DJANGO_DATABASE}
+      POSTGRES_USER: ${DJANGO_USER}
+      POSTGRES_PASSWORD: ${DJANGO_PASSWORD}
+      POSTGRES_ROOT_PASSWORD: ${DJANGO_ROOT_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/mysql
+
+volumes:
+  postgres_data:

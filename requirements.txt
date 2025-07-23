@@ -1,0 +1,4 @@
+django==5.1
+mysqlclient
+python-decouple
+django-bootstrap-v5
