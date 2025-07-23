@@ -6,14 +6,33 @@ services:
     container_name: postgres_django
     restart: always
     environment:
-      POSTGRES_DATABASE: ${DJANGO_DATABASE}
+      POSTGRES_DB: ${DJANGO_DATABASE}
       POSTGRES_USER: ${DJANGO_USER}
       POSTGRES_PASSWORD: ${DJANGO_PASSWORD}
-      POSTGRES_ROOT_PASSWORD: ${DJANGO_ROOT_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
+
+  django-web:
+    build: .
+    container_name: django-docker
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+      DEBUG: ${DEBUG}
+      DJANGO_LOGLEVEL: ${DJANGO_LOGLEVEL}
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS}
+      DATABASE_NAME: ${DJANGO_DATABASE}
+      DATABASE_USERNAME: ${DJANGO_USER}
+      DATABASE_PASSWORD: ${DJANGO_PASSWORD}
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+    env_file:
+      - .env
 
 volumes:
   postgres_data:

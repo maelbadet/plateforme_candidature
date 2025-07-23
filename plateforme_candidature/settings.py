@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 	'bootstrap5',
-	'plateforme_candidature',
+	# 'plateforme_candidature',
 ]
 
 MIDDLEWARE = [
@@ -77,7 +77,7 @@ WSGI_APPLICATION = 'plateforme_candidature.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('DJANGO_DATABASE'),
         'USER': config('DJANGO_USER'),
         'PASSWORD': config('DJANGO_PASSWORD'),

@@ -31,4 +31,13 @@ Quant à l'admin, les vues minimales sont :
 - Page du profil (avec photo)
 - Notification lorsqu’un candidat postule une de mes annonces (Signals)
 
-## entitees
+## Lancement du projet
+Avant de lancer le projet, plusieurs actions sont à realiser. 
+### .env
+Tout d'abord il faut copier coller le .env.example et le renommer .env afin de mettre les 
+valeurs pour la base de donnee
+### docker
+Ensuite, une fois le .env creer, il faut faire un `docker compose up --build -d` afin de 
+lancer le container docker et d'executer le dockerfile pour installer les dependances
+python et demarrer les serveur en amont.
+
