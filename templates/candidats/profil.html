@@ -1,0 +1,55 @@
+{% extends "./base.html" %}
+
+{% block title %}Compte{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h1 class="mb-4 text-center">Bienvenue sur la page profil</h1>
+
+        <h3>Modifier mes informations</h3>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {{ u_form.as_p }}
+            <button type="submit" name="update_user" class="btn btn-primary">Mettre à jour</button>
+        </form>
+
+        <hr>
+
+        <h3>Mes entreprises</h3>
+        <a href="{% url 'entreprise_create' %}" class="btn btn-success mb-3">+ Créer une entreprise</a>
+
+        {% if entreprises %}
+            <div class="list-group">
+                {% for entreprise in entreprises %}
+                    <div class="list-group-item">
+                        <h5 class="mb-1">{{ entreprise.name }}</h5>
+                        <p class="mb-1">
+                            SIRET : {{ entreprise.siret_number }}<br>
+                            Adresse : {{ entreprise.adress }}<br>
+                            Créée le : {{ entreprise.created_at|date:"d/m/Y" }}
+                        </p>
+                        <a href="{% url 'entreprise_update' entreprise.id %}"
+                           class="btn btn-sm btn-primary">Modifier</a>
+                        <a href="{% url 'entreprise_delete' entreprise.id %}"
+                           class="btn btn-sm btn-danger">Supprimer</a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Vous n'avez pas encore créé d'entreprise.</p>
+        {% endif %}
+
+        <h3>Mes candidatures</h3>
+        <ul>
+            {% for candidature in candidatures %}
+                <li>
+                    <strong>{{ candidature.annonce.title }}</strong> - Statut: {{ candidature.status }} - Postulé
+                    le {{ candidature.date_postulation|date:"d/m/Y" }}
+                </li>
+            {% empty %}
+                <li>Vous n'avez pas encore postulé à une annonce.</li>
+            {% endfor %}
+        </ul>
+
+    </div>
+{% endblock %}

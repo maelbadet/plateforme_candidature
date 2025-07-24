@@ -37,7 +37,26 @@ Avant de lancer le projet, plusieurs actions sont à realiser.
 Tout d'abord il faut copier coller le .env.example et le renommer .env afin de mettre les 
 valeurs pour la base de donnee
 ### docker
-Ensuite, une fois le .env creer, il faut faire un `docker compose up --build -d` afin de 
+Ensuite, une fois le .env creer, il faut faire un 
+```bash 
+    docker compose up --build -d
+``` 
+afin de 
 lancer le container docker et d'executer le dockerfile pour installer les dependances
 python et demarrer les serveur en amont.
+
+#### docker entrypoint
+Dans mon **docker-compose.yml** il y a une `commande` menant au entrypoint. Ce entrypoints, 
+permet de faire les migrations du sites avant de creer un super utilisateur qui est defini
+depuis le .env dans :
+```
+# Global variable for super user django
+SUPERUSER_USERNAME=blabla
+SUPERUSER_EMAIL=blabla@gmail.com
+SUPERUSER_PASSWORD=MDPblabla.
+```
+
+Puis de lancer le serveur.
+
+
 

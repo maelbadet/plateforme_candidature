@@ -1,0 +1,44 @@
+{% extends "./base.html" %}
+{% block title %}{{ entreprise.name }}{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="card mb-4">
+            {% if entreprise.photos.first %}
+                <img src="{{ entreprise.photos.first.image.url }}" class="card-img-top" alt="{{ entreprise.name }}">
+            {% endif %}
+            <div class="card-body">
+                <h2 class="card-title">{{ entreprise.name }}</h2>
+                <p><strong>SIRET :</strong> {{ entreprise.siret_number }}</p>
+                <p><strong>Adresse :</strong> {{ entreprise.adress }}</p>
+            </div>
+        </div>
+
+        <h3>Offres disponibles</h3>
+        <div class="list-group">
+            {% for annonce in annonces %}
+                <div class="list-group-item mb-3">
+                    <h5>{{ annonce.title }}</h5>
+                    <p>{{ annonce.description }}</p>
+
+                    {% if user.is_authenticated %}
+                        {% if annonce.id in annonces_deja_postulees %}
+                            <button class="btn btn-secondary" disabled>Déjà postulé</button>
+                        {% else %}
+                            <form method="post" action="{% url 'postuler' annonce.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary">Postuler</button>
+                            </form>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-danger">
+                            <a href="{% url 'connexion' %}">Connectez-vous</a> pour postuler à cette offre.
+                        </p>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <p>Aucune offre pour le moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

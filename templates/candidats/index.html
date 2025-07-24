@@ -1,0 +1,31 @@
+{% extends "./base.html" %}
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="text-center">
+            <h1 class="mb-4">Bienvenue dans le dépôt de candidature</h1>
+        </div>
+
+        <div class="row">
+            {% for entreprise in entreprises %}
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        {% if entreprise.photos.first %}
+                            <img src="{{ entreprise.photos.first.image.url }}" class="card-img-top"
+                                 alt="{{ entreprise.name }}">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ entreprise.name }}</h5>
+                            <p class="card-text">{{ entreprise.adress }}</p>
+                            <a href="{% url 'entreprise_detail' entreprise.id %}" class="btn btn-primary">Voir les
+                                offres</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>Aucune entreprise disponible.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

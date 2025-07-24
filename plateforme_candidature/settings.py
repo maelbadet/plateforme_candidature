@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from decouple import config
 
+print("✔️ Fichier .env chargé : HOST =", config('DJANGO_HOST'))
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,13 +33,16 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'core',
 	'bootstrap5',
-	# 'plateforme_candidature',
+	'candidats',
+	'employeurs',
 ]
 
 MIDDLEWARE = [
@@ -82,7 +86,7 @@ DATABASES = {
         'USER': config('DJANGO_USER'),
         'PASSWORD': config('DJANGO_PASSWORD'),
         'HOST': config('DJANGO_HOST'),
-        'PORT': config('DJANGO_PORT'),
+        'PORT': config('DJANGO_PORT', cast=int),
     }
 }
 
@@ -127,3 +131,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# adding redirect url form login/out forms
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/connexion/'

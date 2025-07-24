@@ -1,22 +1,18 @@
-"""
-URL configuration for plateforme_candidature project.
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/5.2/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
-# from django.contrib import admin
-from django.urls import path
+from django.contrib import admin
+from django.contrib.auth.views import LoginView, LogoutView
+from django.urls import path, include
+from candidats import views
 
 urlpatterns = [
-    #    path('admin/', admin.site.urls),
+	path("", views.home, name="home"),
+	path('admin/', admin.site.urls),
+	path('connexion/', LoginView.as_view(template_name='candidats/connexion.html'), name='connexion'),
+	path('deconnexion/', LogoutView.as_view(next_page='connexion'), name='deconnexion'),
+	path('accounts/profile', views.account, name='account'),
+	path('entreprise/creer/', views.entreprise_create, name='entreprise_create'),
+	path('entreprise/<int:pk>/modifier/', views.entreprise_update, name='entreprise_update'),
+	path('entreprise/<int:pk>/supprimer/', views.entreprise_delete, name='entreprise_delete'),
+	path('inscription/', views.inscription, name='inscription'),
+	path('entreprise/<int:entreprise_id>/', views.entreprise_detail, name='entreprise_detail'),
+	path('postuler/<int:annonce_id>/', views.postuler, name='postuler'),
 ]

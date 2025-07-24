@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-info bg-primary mb-4">
+    <div class="container">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'home' %}">accueil</a>
+            </li>
+            {% if user.is_authenticated %}
+                {% if user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="/admin/">ADMIN</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'account' %}">Mon compte</a>
+                </li>
+                <li class="nav-item d-flex align-items-center text-white ms-3">
+                    Bonjour {{ user.username }}
+                </li>
+                <li class="nav-item ms-3">
+                    <a class="nav-link text-white" href="{% url 'deconnexion' %}">Se déconnecter</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'connexion' %}">Se connecter</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="{% url 'inscription' %}">S'inscrire</a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    {% block content %}
+    {% endblock %}
+</div>
+
+</body>
+</html>

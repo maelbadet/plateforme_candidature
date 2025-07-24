@@ -1,0 +1,60 @@
+Listing des entites ainsi que des attribus
+
+User {
+	l'entité User est deja pres definis par django.contrib.auth.models
+}
+
+Entreprises {
+	id : int,
+	name : string(60),
+	siret_number : int(14),
+	adress : string(255),
+	owner_id : foreign_key(User)
+	created_at : dateTime,
+	updated_at : dateTime,
+	deleted_at : dateTime,
+}
+
+PhotosEntreprise {
+    id : int,
+    entreprise_id : foreign_key(Entreprise),
+    image : fichier,
+    legend : string(100),
+    uploaded_at : datetime
+}
+
+Notifications {
+    id : int,
+    user_id : foreign_key(User),
+    message : text,
+    created_at : datetime,
+    is_read : boolean
+}
+
+Annonces {
+    id : int,
+    entreprise_id : foreign_key(Entreprise),
+    title : string(100),
+    description : text,
+    created_at : dateTime,
+    updated_at : dateTime,
+    deleted_at : dateTime,
+}
+
+Candidatures {
+    id : int,
+    client_id : foreign_key(Client),
+    annonce_id : foreign_key(Annonce),
+    lettre_motivation : text,
+    cv : fichier,
+    status : string(20) (ex: "en attente", "validée", "refusée"),
+    date_postulation : datetime
+}
+
+CandidatureHistorique {
+    id : int,
+    candidature_id : foreign_key(Candidature),
+    action : string(50),  # validée, refusée, etc.
+    user_id : foreign_key(User),
+    date_action : datetime
+}
