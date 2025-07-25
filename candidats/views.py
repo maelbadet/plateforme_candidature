@@ -12,21 +12,29 @@ from employeurs.models import *
 
 def home(request):
 	user = request.user
+	unread_notifications = []
+	if user.is_authenticated and hasattr(user, 'notifications'):
+		unread_notifications = user.notifications.filter(is_read=False)
 	client = getattr(user, 'client_profile', None)
-	unread_notifications = user.notifications.filter(is_read=False)
-
 	if client:
 		entreprises = Entreprise.objects.annotate(
 			total_annonces=Count('annonces', distinct=True),
-			annonces_validees=Count('annonces', filter=Q(annonces__candidatures__client=client,
-			                                             annonces__candidatures__status='validée'), distinct=True)
+			annonces_validees=Count(
+				'annonces',
+				filter=Q(
+					annonces__candidatures__client=client,
+					annonces__candidatures__status='validée'
+				),
+				distinct=True
+			)
 		)
 		entreprises_visibles = entreprises.exclude(total_annonces=F('annonces_validees'))
 	else:
 		entreprises_visibles = Entreprise.objects.all()
-
-	return render(request, 'candidats/index.html',
-	              {'entreprises': entreprises_visibles, 'unread_notifications': unread_notifications})
+	return render(request, 'candidats/index.html', {
+		'entreprises': entreprises_visibles,
+		'unread_notifications': unread_notifications
+	})
 
 
 def connexion(request):
@@ -46,22 +54,18 @@ def inscription(request):
 def account(request):
 	user = request.user
 	client = getattr(user, 'client_profile', None)
-
 	if request.method == 'POST':
 		u_form = UserUpdateForm(request.POST, instance=user)
 		e_form = EntrepriseCreateForm(request.POST)
 		p_form = PhotoEntrepriseForm(request.POST, request.FILES)
-
 		if 'update_user' in request.POST and u_form.is_valid():
 			u_form.save()
 			return redirect('account')
-
 		if 'create_entreprise' in request.POST and e_form.is_valid():
 			entreprise = e_form.save(commit=False)
 			entreprise.owner = user
 			entreprise.save()
 			return redirect('account')
-
 		if 'upload_photo' in request.POST and p_form.is_valid():
 			photo = p_form.save(commit=False)
 			entreprise = client.entreprises.first()
@@ -74,10 +78,8 @@ def account(request):
 		u_form = UserUpdateForm(instance=user)
 		e_form = EntrepriseCreateForm()
 		p_form = PhotoEntrepriseForm()
-
 	candidatures = Candidature.objects.filter(client=client) if client else []
 	entreprises = user.entreprises.all() if user.is_authenticated else []
-
 	context = {
 		'u_form': u_form,
 		'e_form': e_form,
@@ -97,16 +99,13 @@ def entreprise_create(request):
 			entreprise = e_form.save(commit=False)
 			entreprise.owner = request.user
 			entreprise.save()
-
 			photo = p_form.save(commit=False)
 			photo.entreprise = entreprise
 			photo.save()
-
 			return redirect('account')
 	else:
 		e_form = EntrepriseCreateForm()
 		p_form = PhotoEntrepriseForm()
-
 	return render(request, 'candidats/entreprise_form.html', {
 		'form': e_form,
 		'p_form': p_form,
@@ -118,22 +117,18 @@ def entreprise_create(request):
 def entreprise_update(request, pk):
 	entreprise = get_object_or_404(Entreprise, pk=pk, owner=request.user)
 	photo_instance = entreprise.photos.first()
-
 	if request.method == 'POST':
 		e_form = EntrepriseCreateForm(request.POST, instance=entreprise)
 		p_form = PhotoEntrepriseForm(request.POST, request.FILES, instance=photo_instance)
 		if e_form.is_valid() and p_form.is_valid():
 			entreprise = e_form.save()
-
 			photo = p_form.save(commit=False)
 			photo.entreprise = entreprise
 			photo.save()
-
 			return redirect('account')
 	else:
 		e_form = EntrepriseCreateForm(instance=entreprise)
 		p_form = PhotoEntrepriseForm(instance=photo_instance)
-
 	return render(request, 'candidats/entreprise_form.html', {
 		'form': e_form,
 		'p_form': p_form,
@@ -197,7 +192,7 @@ def postuler(request, annonce_id):
 		Notification.objects.create(
 			user=annonce.entreprise.owner,
 			message=f"{request.user.username} a postulé à l'annonce '{annonce.title}'",
-			candidature = candidature
+			candidature=candidature
 		)
 
 		CandidatureHistorique.objects.create(

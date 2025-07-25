@@ -96,7 +96,10 @@ def supprimer_annonce(request, entreprise_id, annonce_id):
 @login_required
 def notifications(request):
 	user = request.user
-	notifications = user.notifications.filter(is_read=False)
+	if user.is_authenticated:
+		notifications = user.notifications.filter(is_read=False)
+	else:
+		notifications = 0
 
 	return render(request, 'employeurs/notifications_list.html', {
 		'notifications': notifications
@@ -113,7 +116,9 @@ def lire_notification(request, notification_id):
 	return redirect('entreprise_detail', entreprise_id=entreprise_id)
 
 
-@login_required
 def check_notifications(request):
-	count = request.user.notifications.filter(is_read=False).count()
+	if request.user.is_authenticated:
+		count = request.user.notifications.filter(is_read=False).count()
+	else:
+		count = 0
 	return JsonResponse({'unread_count': count})

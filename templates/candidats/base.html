@@ -134,7 +134,9 @@
         }
 
         document.addEventListener("DOMContentLoaded", function () {
-            fetchNotificationCount();
+            {% if user.is_authenticated and user.is_superuser %}
+                fetchNotificationCount();
+            {% endif %}
         });
     </script>
 {% endblock %}
