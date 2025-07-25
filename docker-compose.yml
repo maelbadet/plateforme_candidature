@@ -34,7 +34,6 @@ services:
       DJANGO_SUPERUSER_PASSWORD: ${SUPERUSER_PASSWORD}
     env_file:
       - .env
-    command: ["./entrypoint.sh"]
 
 volumes:
   postgres_data:
