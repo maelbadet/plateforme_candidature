@@ -30,6 +30,12 @@
                         </p>
                         <a href="{% url 'entreprise_update' entreprise.id %}"
                            class="btn btn-sm btn-primary">Modifier</a>
+                        {% if entreprise.owner_id == user.id %}
+                            <a href="{% url 'entreprise_detail' entreprise.id %}"
+                               class="btn btn-sm btn-secondary">Mon Entreprise</a>
+                            <a href="{% url 'mes_annonces' entreprise.id %}" class="btn btn-sm btn-info">Mes
+                                annonces</a>
+                        {% endif %}
                         <a href="{% url 'entreprise_delete' entreprise.id %}"
                            class="btn btn-sm btn-danger">Supprimer</a>
                     </div>

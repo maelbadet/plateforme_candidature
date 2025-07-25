@@ -1,0 +1,14 @@
+{% extends "../candidats/base.html" %}
+{% block title %}Supprimer l'annonce{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Supprimer l'annonce : {{ annonce.title }}</h2>
+    <p>Êtes-vous sûr de vouloir supprimer cette annonce ?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Oui, supprimer</button>
+        <a href="{% url 'mes_annonces' entreprise.id %}" class="btn btn-secondary">Annuler</a>
+    </form>
+</div>
+{% endblock %}

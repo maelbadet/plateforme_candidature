@@ -1,4 +1,11 @@
+import csv
+
 from django.contrib import admin
+from django import forms
+from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, render
+from django.urls import path
 from .models import (
     Entreprise, PhotosEntreprise, Annonce, Notification,
     Candidature, CandidatureHistorique, Client
@@ -7,6 +14,9 @@ from .models import (
 @admin.action(description="Marquer comme validée")
 def marquer_comme_validee(modeladmin, request, queryset):
     queryset.update(status='validée')
+
+class CsvImportForm(forms.Form):
+    csv_file = forms.FileField()
 
 @admin.register(Entreprise)
 class EntrepriseAdmin(admin.ModelAdmin):
@@ -34,10 +44,48 @@ class NotificationAdmin(admin.ModelAdmin):
 
 @admin.register(Candidature)
 class CandidatureAdmin(admin.ModelAdmin):
-    list_display = ['client', 'annonce', 'status', 'date_postulation']
+    list_display = ('id', 'client', 'annonce', 'status', 'date_postulation')
     search_fields = ['client__user__username', 'annonce__title', 'status']
     list_filter = ['status', 'date_postulation']
     actions = [marquer_comme_validee]
+    change_list_template = "admin/candidature_change_list.html"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('export_csv/', self.admin_site.admin_view(self.export_csv)),
+            path('import_csv/', self.admin_site.admin_view(self.import_csv)),
+        ]
+        return custom_urls + urls
+
+    def export_csv(self, request):
+        return redirect('export_candidatures')
+
+    def import_csv(self, request):
+        if request.method == "POST":
+            form = CsvImportForm(request.POST, request.FILES)
+            if form.is_valid():
+                file = form.cleaned_data['csv_file']
+                decoded = file.read().decode('utf-8').splitlines()
+                reader = csv.DictReader(decoded)
+                for row in reader:
+                    try:
+                        client = Client.objects.get(user__username=row['Client'])
+                        annonce = Annonce.objects.get(title=row['Annonce'])
+                        Candidature.objects.create(
+                            client=client,
+                            annonce=annonce,
+                            lettre_motivation=row.get('Lettre', ''),
+                            cv='default.pdf',
+                            status=row['Status']
+                        )
+                    except Exception as e:
+                        messages.error(request, f"Erreur ligne {row}: {e}")
+                self.message_user(request, "Importation réussie !", messages.SUCCESS)
+                return HttpResponseRedirect("../")
+        else:
+            form = CsvImportForm()
+        return render(request, "admin/csv_form.html", {"form": form})
 
 @admin.register(CandidatureHistorique)
 class CandidatureHistoriqueAdmin(admin.ModelAdmin):

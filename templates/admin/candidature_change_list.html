@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+{% block object-tools-items %}
+    <li>
+        <a href="{% url 'admin:employeurs_candidature_changelist' %}export_csv/" class="button">Exporter les
+            candidatures du jour (CSV)</a>
+    </li>
+    <li>
+        <a href="{% url 'admin:employeurs_candidature_changelist' %}import_csv/" class="button">Importer depuis CSV</a>
+    </li>
+{% endblock %}

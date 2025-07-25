@@ -4,9 +4,14 @@
 {% block content %}
     <div class="container mt-5">
         <div class="card mb-4">
-            {% if entreprise.photos.first %}
-                <img src="{{ entreprise.photos.first.image.url }}" class="card-img-top" alt="{{ entreprise.name }}">
-            {% endif %}
+            {% with entreprise.photos.first as photo %}
+                {% if photo and photo.image %}
+                    <img src="{{ photo.image.url }}" class="card-img-top w-50" alt="{{ photo.legend }}">
+                {% else %}
+                    <img src="../../media/photos_entreprise/default-image.jpg" class="card-img-top w-50"
+                         alt="Aucune image">
+                {% endif %}
+            {% endwith %}
             <div class="card-body">
                 <h2 class="card-title">{{ entreprise.name }}</h2>
                 <p><strong>SIRET :</strong> {{ entreprise.siret_number }}</p>
@@ -20,15 +25,32 @@
                 <div class="list-group-item mb-3">
                     <h5>{{ annonce.title }}</h5>
                     <p>{{ annonce.description }}</p>
-
                     {% if user.is_authenticated %}
-                        {% if annonce.id in annonces_deja_postulees %}
-                            <button class="btn btn-secondary" disabled>Déjà postulé</button>
+                        {% if entreprise.owner_id == user.id %}
+                            {% if annonce.candidatures.all.exists %}
+                                <p><strong>Candidatures reçues :</strong></p>
+                                <ul>
+                                    {% for candidature in annonce.candidatures.all %}
+                                        <li>
+                                            <a href="{% url 'profil_candidat' candidature.client.id %}">
+                                                {{ candidature.client.user.username }}
+                                            </a> - {{ candidature.status }}
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% else %}
+                                <p>Aucune candidature reçue pour cette annonce.</p>
+                            {% endif %}
+
                         {% else %}
-                            <form method="post" action="{% url 'postuler' annonce.id %}">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-primary">Postuler</button>
-                            </form>
+
+                            {% if annonce.id in annonces_deja_postulees %}
+                                <button class="btn btn-secondary" disabled>Déjà postulé</button>
+                            {% else %}
+                                <button type="button" class="btn btn-primary"
+                                        onclick="openPostulerModal({{ annonce.id }})">Postuler
+                                </button>
+                            {% endif %}
                         {% endif %}
                     {% else %}
                         <p class="text-danger">

@@ -1,0 +1,46 @@
+{% extends "../candidats/base.html" %}
+{% block title %}Profil de {{ client.user.username }}{% endblock %}
+
+{% block content %}
+    <div class="container mt-5">
+        <h2>Profil du candidat : {{ client.user.username }}</h2>
+        <p><strong>Email :</strong> {{ client.user.email }}</p>
+
+        <h4 class="mt-4">Candidatures reçues :</h4>
+        <ul class="list-group">
+            {% for candidature in candidatures %}
+                <li class="list-group-item">
+                    <strong>Annonce :</strong> {{ candidature.annonce.title }} <br>
+                    <strong>Date :</strong> {{ candidature.date_postulation|date:"d/m/Y H:i" }} <br>
+                    <strong>Statut :</strong> {{ candidature.status }} <br>
+                    <strong>Lettre de motivation :</strong><br>
+                    <p>{{ candidature.lettre_motivation }}</p>
+                    {% if candidature.cv %}
+                        <a href="{{ candidature.cv.url }}" class="btn btn-sm btn-outline-primary" target="_blank">Voir
+                            le CV</a>
+                    {% endif %}
+
+                    {% if candidature.status == 'en attente' %}
+                        <form method="post" action="{% url 'changer_statut_candidature' candidature.id %}" class="mt-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="decision" value="valider">
+                            <button type="submit" class="btn btn-success btn-sm me-2">Accepter</button>
+                        </form>
+
+                        <form method="post" action="{% url 'changer_statut_candidature' candidature.id %}" class="mt-2">
+                            {% csrf_token %}
+                            <input type="hidden" name="decision" value="refuser">
+                            <button type="submit" class="btn btn-danger btn-sm">Refuser</button>
+                        </form>
+                    {% else %}
+                        <p class="mt-2">
+                <span class="badge {% if candidature.status == 'validée' %}bg-success{% else %}bg-danger{% endif %}">
+                    {{ candidature.status|capfirst }}
+                </span>
+                        </p>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endblock %}

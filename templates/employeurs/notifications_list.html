@@ -1,0 +1,19 @@
+{% extends '../candidats/base.html' %}
+
+{% block title %}Mes Notifications{% endblock %}
+
+{% block content %}
+    <h2>Mes notifications</h2>
+    <ul class="list-group">
+        {% for notif in notifications %}
+            <li class="list-group-item {% if not notif.is_read %}list-group-item-warning{% endif %}">
+                <a href="{% url 'lire_notification' notif.id %}" class="text-decoration-none text-dark">
+                    {{ notif.message }}<br>
+                    <small class="text-muted">{{ notif.created_at|date:"d/m/Y H:i" }}</small>
+                </a>
+            </li>
+        {% empty %}
+            <li class="list-group-item text-muted">Aucune nouvelle notification.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

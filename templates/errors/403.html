@@ -1,0 +1,15 @@
+{% extends "../candidats/base.html" %}
+{% block title %}Accès refusé{% endblock %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <div class="card shadow-lg p-4">
+        <div class="card-body">
+            <h1 class="display-4 text-danger"><i class="bi bi-shield-lock"></i> 403</h1>
+            <h3 class="mb-3">Accès refusé</h3>
+            <p class="lead">{{ message|default:"Vous n'avez pas l'autorisation d'accéder à cette page." }}</p>
+            <a href="{% url 'home' %}" class="btn btn-primary mt-3">Retour à l’accueil</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

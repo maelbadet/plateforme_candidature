@@ -1,4 +1,5 @@
 {% extends "./base.html" %}
+{% load static %}
 {% block title %}Accueil{% endblock %}
 
 {% block content %}
@@ -6,15 +7,18 @@
         <div class="text-center">
             <h1 class="mb-4">Bienvenue dans le dépôt de candidature</h1>
         </div>
-
         <div class="row">
             {% for entreprise in entreprises %}
                 <div class="col-md-4 mb-4">
                     <div class="card">
-                        {% if entreprise.photos.first %}
-                            <img src="{{ entreprise.photos.first.image.url }}" class="card-img-top"
-                                 alt="{{ entreprise.name }}">
-                        {% endif %}
+                        {% with entreprise.photos.first as photo %}
+                            {% if photo and photo.image %}
+                                <img src="{{ photo.image.url }}" class="card-img-top w-50" alt="{{ photo.legend }}">
+                            {% else %}
+                                <img src="../../media/photos_entreprise/default-image.jpg" class="card-img-top w-50" alt="Aucune image">
+                            {% endif %}
+                        {% endwith %}
+
                         <div class="card-body">
                             <h5 class="card-title">{{ entreprise.name }}</h5>
                             <p class="card-text">{{ entreprise.adress }}</p>

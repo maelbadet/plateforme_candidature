@@ -1,0 +1,26 @@
+{% extends "../candidats/base.html" %}
+{% block title %}Mes annonces{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Mes annonces pour {{ entreprise.name }}</h2>
+    <a href="{% url 'creer_annonce' entreprise.id %}" class="btn btn-success mb-3">+ Ajouter une annonce</a>
+
+    {% if annonces %}
+        <ul class="list-group">
+            {% for annonce in annonces %}
+                <li class="list-group-item">
+                    <h5>{{ annonce.title }}</h5>
+                    <p>{{ annonce.description }}</p>
+                    <div class="btn-group">
+                        <a href="{% url 'modifier_annonce' entreprise.id annonce.id %}" class="btn btn-sm btn-primary">Modifier</a>
+                        <a href="{% url 'supprimer_annonce' entreprise.id annonce.id %}" class="btn btn-sm btn-danger">Supprimer</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>Aucune annonce publiée pour cette entreprise.</p>
+    {% endif %}
+</div>
+{% endblock %}
